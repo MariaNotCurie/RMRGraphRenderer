@@ -34,7 +34,7 @@ def S1(x: np.array, a, eps, lt):
     if eps == 0:
         return np.array([0.0] * x.size)
     y = (1 + a * x / eps * (1 - np.exp(-lt))) ** eps / np.exp(a * x)
-    y[y < 1e-4] = np.NAN
+    y[y < 1e-6] = np.NAN
     return y
 
 
@@ -60,9 +60,10 @@ class ModelingApp(QtWidgets.QMainWindow, Modeling.Ui_MainWindow):
         self.lineEditE.editingFinished.connect(lambda: lineEdit_update(self.sliderE, self.lineEditE))
         self.lineEditT.editingFinished.connect(lambda: lineEdit_update(self.sliderT, self.lineEditT))
 
+        self.pointsX, self.pointsY = Constants.X_POINTS, Constants.Y_POINTS
+
         self.rightBorder = max(self.pointsX) * Constants.GRAPH_RIGHT_BORDER_COEFFICIENT
         self.mpl_canvas.canvas.axes.set_xlim(GRAPH_LEFT_BORDER, self.rightBorder)
-        self.mpl_canvas.canvas.axes.set_ylim(1e-3, 1.2)
         self.mpl_canvas.canvas.axes.set_xlabel('доза, Гр')
         self.mpl_canvas.canvas.axes.set_ylabel('SF')
         self.mpl_canvas.canvas.axes.semilogy(self.pointsX, self.pointsY, 'o', label='данные')
@@ -132,7 +133,6 @@ class ModelingApp(QtWidgets.QMainWindow, Modeling.Ui_MainWindow):
 
         self.mpl_canvas.canvas.axes.legend(loc='best')
         self.mpl_canvas.canvas.axes.set_xlim(GRAPH_LEFT_BORDER, self.rightBorder)
-        self.mpl_canvas.canvas.axes.set_ylim(1e-3, 1.2)
         self.mpl_canvas.canvas.draw()
 
     def add_graphs(self):
